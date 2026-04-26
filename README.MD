@@ -46,3 +46,73 @@
 4. Остановка:
     ```bash
     docker-compose down
+
+## API
+1. Создание задачи на взлом хэша
+#### `POST /api/hash/crack`
+Создает задачу на подбор строки по MD5-хэшу.
+
+Request body:
+
+```json
+{
+  "hash": "cd79634dcddcc1ac584ef90b66c83d63",
+  "maxLength": 5
+}
+```
+
+Поля:
+
+- `hash` - MD5-хэш в hex-формате, ровно 32 символа.
+- `maxLength` - максимальная длина перебираемой строки, положительное целое число.
+  
+Response `200 OK`:
+
+```json
+{
+  "requestId": "6c85c3f1-c9e2-487b-b555-4cb6c2179ca1"
+}
+```
+
+2. Получение статуса выполнения
+#### `GET /api/hash/status?requestId=<UUID>`
+
+Возвращает статус ранее созданного запроса.
+
+Пример запроса:
+
+```bash
+curl "http://localhost:8080/api/hash/status?requestId=6c85c3f1-c9e2-487b-b555-4cb6c2179ca1"
+```
+Response (IN_PROGRESS):
+
+```json
+{
+  "status": "IN_PROGRESS",
+  "progress": 65,
+  "data": null
+}
+```
+
+Response (READY):
+
+```json
+{
+  "status": "READY",
+  "progress": 100,
+  "data": ["9z9z9"]
+}
+```
+
+Response (ERROR):
+
+```json
+{
+  "status": "ERROR",
+  "progress": 45,
+  "data": null
+}
+```
+## Swagger документация
+
+Swagger UI: http://localhost:8080/swagger
