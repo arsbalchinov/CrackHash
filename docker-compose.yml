@@ -1,0 +1,31 @@
+services:
+  manager:
+    build: ./Manager
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Alphabet=abcdefghijklmnopqrstuvwxyz0123456789
+      - HeartbeatTimeout=25
+      - HeartbeatInterval=10
+      - HeartbeatCheckInterval=10
+    networks:
+      - crackhash-network
+
+  worker:
+    build: ./Worker
+    deploy:
+      replicas: 3                  # По умолчанию 3 воркера
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MANAGER_URL=http://manager:8080
+      - Alphabet=abcdefghijklmnopqrstuvwxyz0123456789
+      - HeartbeatInterval=10
+    networks:
+      - crackhash-network
+    depends_on:
+      - manager
+
+networks:
+  crackhash-network:
+    driver: bridge
